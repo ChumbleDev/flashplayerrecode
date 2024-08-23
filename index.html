@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ruffle SWF Loader</title>
+    <script src="path/to/ruffle/ruffle.js"></script>
+    <style>
+        body {
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f0f0f0;
+        }
+        #container {
+            width: 800px;
+            height: 600px;
+            border: 1px solid #000;
+            transition: background-color 0.5s, background-image 0.5s;
+            background-color: white;
+        }
+        .button-container {
+            margin: 10px 0;
+            text-align: center;
+        }
+        .button-container button {
+            margin: 0 5px;
+        }
+    </style>
+    <script>
+        // Trigger a warning when the page loads
+        window.onload = function() {
+            alert("WARNING ⚠️: You will need Ruffle for this website to work. You can grab the extension at https://ruffle.rs");
+        };
+    </script>
+</head>
+<body>
+    <div id="container">
+        <div class="button-container">
+            <button id="loadButton">Load SWF</button>
+            <input type="file" id="fileInput" accept=".swf" style="display:none;">
+            <button id="deloadButton">Deload SWF</button>
+        </div>
+        <div class="button-container">
+            <button onclick="changeTheme('white')">White Theme</button>
+            <button onclick="changeTheme('dark')">Dark Grey Theme</button>
+            <button onclick="changeTheme('space')">Space Theme</button>
+        </div>
+    </div>
+    <script>
+        window.RufflePlayer = window.RufflePlayer || {};
+        let player;
+        let isSwfLoaded = false;
+
+        window.addEventListener("load", () => {
+            const ruffle = window.RufflePlayer.newest();
+            player = ruffle.createPlayer();
+            const container = document.getElementById("container");
+            container.appendChild(player);
+
+            document.getElementById("loadButton").addEventListener("click", () => {
+                document.getElementById("fileInput").click();
+            });
+
+            document.getElementById("fileInput").addEventListener("change", (event) => {
+                const file = event.target.files[0];
+                if (file) {
+                    const url = URL.createObjectURL(file);
+                    player.load(url);
+                    isSwfLoaded = true;
+                }
+            });
+
+            document.getElementById("deloadButton").addEventListener("click", () => {
+                if (isSwfLoaded) {
+                    player.stop();
+                    container.innerHTML = ""; // Clear the player from the container
+                    isSwfLoaded = false;
+                } else {
+                    alert("No SWF is loaded");
+                }
+            });
+        });
+
+        // Function to change the theme
+        function changeTheme(theme) {
+            const container = document.getElementById("container");
+            if (theme === 'white') {
+                container.style.backgroundColor = 'white';
+                container.style.backgroundImage = 'none';
+            } else if (theme === 'dark') {
+                container.style.backgroundColor = '#212121'; // Dark grey
+                container.style.backgroundImage = 'none';
+            } else if (theme === 'space') {
+                container.style.backgroundColor = 'black'; // Fallback color
+                container.style.backgroundImage = 'url(https://raw.githubusercontent.com/ChumbleDev/flashplayer/main/images/space.png)';
+                container.style.backgroundSize = 'cover';
+            }
+        }
+    </script>
+</body>
+</html>
